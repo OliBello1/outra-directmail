@@ -299,22 +299,14 @@
         </section>
 
         <div class="basket">
-          <!-- LEFT: pricing tiers + live cost breakdown -->
+          <!-- LEFT: live cost breakdown only -->
           <aside class="basket__breakdown">
-            <section class="panel">
-              <h2 class="panel__title">Volume pricing</h2>
-              <table class="tiers">
-                <thead><tr><th>DMs / month</th><th>Per DM</th></tr></thead>
-                <tbody id="tiersBody">
-                  <tr data-tier="1"><td>First 10</td><td><span class="pill pill--free">Free trial</span></td></tr>
-                  <tr data-tier="2"><td>11 – 50</td><td>£1.50</td></tr>
-                  <tr data-tier="3"><td>51 – 100</td><td>£1.40</td></tr>
-                  <tr data-tier="4"><td>101 – 200</td><td>£1.30</td></tr>
-                  <tr data-tier="5"><td>201+</td><td>£1.00</td></tr>
-                </tbody>
-              </table>
-              <p class="panel__hint">Tiered per-DM rate — pay only for what you send.</p>
-            </section>
+            <!-- Hidden lookup body still needs to exist for tier-highlight code,
+                 but it's not rendered. -->
+            <table hidden><tbody id="tiersBody">
+              <tr data-tier="1"></tr><tr data-tier="2"></tr><tr data-tier="3"></tr>
+              <tr data-tier="4"></tr><tr data-tier="5"></tr>
+            </tbody></table>
 
             <section class="panel">
               <h2 class="panel__title">Cost breakdown · this month</h2>

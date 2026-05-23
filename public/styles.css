@@ -543,15 +543,30 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
   text-align: center; padding: 18px;
   z-index: 3;
 }
-/* Upload-mode card: uploaded image fills the whole card, hide copy / address overlay */
-.card--upload .card__media { display: block; background: transparent; }
+/* Upload-mode card: uploaded image fills the whole card, hide every other layer.
+   Use !important on .card__media to override the template-specific
+   `display: none` rules above (which fire for bold/minimal). */
+.card--upload .card__media {
+  display: block !important;
+  background: transparent;
+  inset: 0;
+  z-index: 1;
+}
 .card--upload .card__media::after { display: none; }
+.card--upload .card__media img {
+  display: block !important;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
 .card--upload .card__copy,
 .card--upload .card__logo,
 .card--upload .card__back-art,
 .card--upload .card__addr,
 .card--upload .card__stamp,
 .card--upload .card__footer { display: none; }
+/* In upload mode the card itself shouldn't show its template-gradient background
+   peeking through transparent PNGs — keep it neutral. */
+.card--upload { background: var(--bg-warm) !important; }
 
 .card__copy { margin-top: auto; position: relative; z-index: 1; }
 .card__headline {
@@ -651,13 +666,13 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
   display: flex; flex-direction: column; gap: 14px;
 }
 .capslider__readout {
-  display: flex; align-items: baseline; justify-content: center;
-  gap: 8px;
+  display: flex; align-items: baseline; justify-content: flex-start;
+  gap: 10px;
   color: var(--outra-navy);
 }
-.capslider__prefix { font-size: 22px; font-weight: 700; color: var(--text-muted); }
-.capslider__value  { font-size: 52px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
-.capslider__suffix { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+.capslider__prefix { display: none; }     /* superfluous — value already self-evident */
+.capslider__value  { font-size: 56px; font-weight: 800; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; line-height: 1; }
+.capslider__suffix { font-size: 15px; color: var(--text-secondary); font-weight: 600; }
 
 .capslider__range {
   -webkit-appearance: none;
@@ -697,10 +712,10 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
 }
 
 .cap-panel__readout {
-  margin-top: 18px;
-  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 20px;
+  display: flex; flex-wrap: wrap; gap: 10px;
   font-size: 14px; color: var(--text-secondary);
-  justify-content: center;
+  justify-content: flex-start;
 }
 .cap-panel__readout .dot { color: var(--text-muted); }
 .cap-panel__readout strong { color: var(--outra-navy); font-variant-numeric: tabular-nums; }
