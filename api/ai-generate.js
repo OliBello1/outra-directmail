@@ -6,7 +6,15 @@
 // Response:     { headline, sub, cta, template, rationale }
 
 const ANTHROPIC_VERSION = '2023-06-01';
-const MODEL             = 'claude-3-5-sonnet-20241022';
+// Try models in order; first one the workspace can access wins.
+// 404 typically means this snapshot/family isn't enabled for the key.
+const MODEL_FALLBACKS = [
+  'claude-sonnet-4-20250514',
+  'claude-3-5-sonnet-latest',
+  'claude-3-5-sonnet-20241022',
+  'claude-3-5-haiku-latest',
+  'claude-3-5-haiku-20241022'
+];
 
 module.exports = async (req, res) => {
   if (req.method !== 'POST') {
@@ -51,34 +59,54 @@ Generate one design concept. Pick the best template for the brief (you can overr
 
 Return JSON only.`;
 
-  try {
-    const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type':    'application/json',
-        'x-api-key':       apiKey,
-        'anthropic-version': ANTHROPIC_VERSION
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: 400,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: userPrompt }]
-      })
-    });
+  let lastErrMsg = null;
+  let json = null;
+  let usedModel = null;
 
-    if (!apiRes.ok) {
-      const errText = await apiRes.text();
-      console.error('[ai-generate] anthropic error', apiRes.status, errText);
-      let msg = `Anthropic API error (${apiRes.status})`;
-      try {
-        const errJson = JSON.parse(errText);
-        if (errJson.error && errJson.error.message) msg = errJson.error.message;
-      } catch { /* leave default */ }
-      return res.status(502).json({ error: msg });
+  for (const model of MODEL_FALLBACKS) {
+    try {
+      const apiRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type':    'application/json',
+          'x-api-key':       apiKey,
+          'anthropic-version': ANTHROPIC_VERSION
+        },
+        body: JSON.stringify({
+          model,
+          max_tokens: 400,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userPrompt }]
+        })
+      });
+      if (!apiRes.ok) {
+        const errText = await apiRes.text();
+        let msg = `Anthropic ${apiRes.status}`;
+        try {
+          const errJson = JSON.parse(errText);
+          if (errJson.error && errJson.error.message) msg = errJson.error.message;
+        } catch { /* keep default */ }
+        console.warn(`[ai-generate] model ${model} failed: ${msg}`);
+        lastErrMsg = `${model}: ${msg}`;
+        // Retry next model only for 404/400 (model not found / invalid). Bail on auth / quota.
+        if ([401, 403, 429, 500, 503].includes(apiRes.status)) {
+          return res.status(502).json({ error: msg });
+        }
+        continue; // try next model
+      }
+      json = await apiRes.json();
+      usedModel = model;
+      break;
+    } catch (err) {
+      console.error(`[ai-generate] network error for ${model}`, err);
+      lastErrMsg = err.message;
     }
+  }
 
-    const json = await apiRes.json();
+  if (!json) {
+    return res.status(502).json({ error: lastErrMsg || 'No model available' });
+  }
+  try {
     const text = (json.content && json.content[0] && json.content[0].text) || '';
 
     // Extract the JSON block (Claude usually returns clean JSON, but be defensive).
@@ -100,7 +128,8 @@ Return JSON only.`;
       sub:       String(parsed.sub      || '').slice(0, 240),
       cta:       String(parsed.cta      || '').slice(0, 60),
       template:  ['bold','image','minimal'].includes(parsed.template) ? parsed.template : template,
-      rationale: String(parsed.rationale || '').slice(0, 240)
+      rationale: String(parsed.rationale || '').slice(0, 240),
+      model:     usedModel
     };
     if (!out.cta.endsWith('→')) out.cta = out.cta.replace(/\s*[→>]+\s*$/, '').trim() + ' →';
 
