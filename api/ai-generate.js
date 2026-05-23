@@ -6,14 +6,18 @@
 // Response:     { headline, sub, cta, template, rationale }
 
 const ANTHROPIC_VERSION = '2023-06-01';
-// Try models in order; first one the workspace can access wins.
-// 404 typically means this snapshot/family isn't enabled for the key.
+// Try in order — first available wins. Mix of generic family aliases
+// (Anthropic guarantees these resolve to a current snapshot) and dated IDs
+// as a backstop. If everything 404s here, the key is the problem.
 const MODEL_FALLBACKS = [
+  'claude-sonnet-4-5',
+  'claude-opus-4-5',
+  'claude-haiku-4-5',
   'claude-sonnet-4-20250514',
-  'claude-3-5-sonnet-latest',
+  'claude-opus-4-1-20250805',
   'claude-3-5-sonnet-20241022',
-  'claude-3-5-haiku-latest',
-  'claude-3-5-haiku-20241022'
+  'claude-3-5-haiku-20241022',
+  'claude-3-haiku-20240307'
 ];
 
 module.exports = async (req, res) => {
