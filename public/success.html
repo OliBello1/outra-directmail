@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0d14" />
+  <title>You're all set · Outra Direct Mail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="/styles.css" />
+  <style>
+    .success-wrap {
+      min-height: calc(100vh - 80px);
+      display: grid; place-items: center;
+      padding: 40px 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .success {
+      max-width: 560px;
+      text-align: center;
+      background: var(--bg-2);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-lg);
+      padding: 56px 40px;
+      box-shadow: var(--shadow-lg);
+      animation: stepIn .6s var(--ease-out) both;
+    }
+    .success__tick {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #10b981);
+      display: grid; place-items: center;
+      margin: 0 auto 24px;
+      color: white;
+      box-shadow: 0 20px 40px -12px rgba(52,211,153,.55);
+      animation: pop .55s var(--ease-out) .15s both;
+    }
+    .success__tick svg { width: 36px; height: 36px; }
+    @keyframes pop {
+      0%   { transform: scale(.5); opacity: 0; }
+      70%  { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+    .success__what {
+      list-style: none;
+      padding: 0;
+      margin: 30px 0 0;
+      text-align: left;
+      border-top: 1px solid var(--line);
+    }
+    .success__what li {
+      display: flex;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-2);
+      font-size: 14px;
+    }
+    .success__num {
+      flex: none;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      background: rgba(99,102,241,.18);
+      color: var(--indigo-2);
+      font-weight: 700;
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+    .success__num + div strong { display: block; color: var(--ink-0); font-weight: 600; margin-bottom: 2px; }
+    .session-id {
+      margin-top: 28px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ink-3);
+      word-break: break-all;
+    }
+  </style>
+</head>
+<body data-step="4">
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob--indigo"></span>
+    <span class="blob blob--cyan"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">outra<span class="brand-word__sub">·directmail</span></span>
+    </div>
+  </header>
+
+  <main class="success-wrap">
+    <div class="success">
+      <div class="success__tick" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-11"/></svg>
+      </div>
+      <div class="eyebrow">Confirmed</div>
+      <h1 class="display" style="font-size: clamp(28px, 4vw, 40px); margin-bottom: 14px;">You're all set.</h1>
+      <p class="lede" style="margin-bottom: 0;">
+        Your card has been securely captured by Stripe. The first 10 DMs are on us — no charge yet.
+      </p>
+
+      <ol class="success__what">
+        <li>
+          <span class="success__num">1</span>
+          <div>
+            <strong>We'll confirm by text</strong>
+            You'll get a single SMS to the number you provided within the next hour.
+          </div>
+        </li>
+        <li>
+          <span class="success__num">2</span>
+          <div>
+            <strong>Your designer reviews</strong>
+            An Outra designer polishes the card you built and emails you a proof for sign-off.
+          </div>
+        </li>
+        <li>
+          <span class="success__num">3</span>
+          <div>
+            <strong>First batch ships</strong>
+            Once approved, your first 10 DMs go out free. Billing kicks in only when you exceed the trial.
+          </div>
+        </li>
+      </ol>
+
+      <div class="session-id" id="sessionIdBlock"></div>
+
+      <div style="margin-top: 30px;">
+        <a href="https://outra.vip" class="btn btn--ghost">← Back to outra.vip</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>© Outra Ltd. · outra.vip</span>
+    <span>Need help? <a href="mailto:hello@outra.vip" style="color: var(--ink-2);">hello@outra.vip</a></span>
+  </footer>
+
+  <script>
+    // Show the Stripe session ID if it was passed back so support can trace it.
+    const sid = new URLSearchParams(window.location.search).get('sid');
+    if (sid) {
+      document.getElementById('sessionIdBlock').textContent = 'Reference: ' + sid;
+    }
+  </script>
+</body>
+</html>

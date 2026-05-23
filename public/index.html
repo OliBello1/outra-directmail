@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0d14" />
+  <title>Outra Direct Mail — Hyper-targeted, Postcode-perfect</title>
+  <meta name="description" content="Hyper-targeted direct mail subscriptions. Pick your postcodes, build your card, ship it weekly. From £1.00 per DM." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body data-step="1">
+
+  <!-- Ambient gradient blobs -->
+  <div class="bg-blobs" aria-hidden="true">
+    <span class="blob blob--indigo"></span>
+    <span class="blob blob--cyan"></span>
+    <span class="blob blob--magenta"></span>
+  </div>
+
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">outra<span class="brand-word__sub">·directmail</span></span>
+    </div>
+    <nav class="progress" aria-label="Funnel progress">
+      <ol class="progress__list">
+        <li class="progress__item" data-progress-step="1"><span>1</span><label>Area</label></li>
+        <li class="progress__item" data-progress-step="2"><span>2</span><label>Contact</label></li>
+        <li class="progress__item" data-progress-step="3"><span>3</span><label>Design</label></li>
+        <li class="progress__item" data-progress-step="4"><span>4</span><label>Checkout</label></li>
+      </ol>
+      <div class="progress__rail"><i id="progressRail"></i></div>
+    </nav>
+  </header>
+
+  <main id="stage" class="stage">
+
+    <!-- ───────────────── STEP 1 ───────────────── -->
+    <section class="step step--1" data-step="1">
+      <div class="step__inner">
+        <div class="eyebrow">Step 1 · Area Selection</div>
+        <h1 class="display">Direct mail that lands<br/>only where it should.</h1>
+        <p class="lede">Choose the postcodes you want to reach. We'll show you a live estimate of weekly volume as you build your list.</p>
+
+        <div class="search">
+          <div class="search__field">
+            <svg class="search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input
+              id="postcodeInput"
+              type="search"
+              autocomplete="off"
+              autocapitalize="characters"
+              spellcheck="false"
+              placeholder="Try a postcode (e.g. NW6) or an area (e.g. Hackney)"
+              aria-label="Postcode or area search"
+            />
+          </div>
+          <ul id="postcodeResults" class="search__results" role="listbox" hidden></ul>
+        </div>
+
+        <ul id="chips" class="chips" aria-label="Selected postcodes"></ul>
+
+        <div class="estimate" id="estimate" hidden>
+          <div class="estimate__metric">
+            <span class="estimate__label">Estimated reach</span>
+            <span class="estimate__value"><strong id="estDms">0</strong><span> DMs / week</span></span>
+          </div>
+          <div class="estimate__metric">
+            <span class="estimate__label">Postcodes selected</span>
+            <span class="estimate__value"><strong id="estCount">0</strong></span>
+          </div>
+          <div class="estimate__metric">
+            <span class="estimate__label">Monthly volume</span>
+            <span class="estimate__value"><strong id="estMonthly">0</strong><span> DMs / month</span></span>
+          </div>
+        </div>
+
+        <div class="step__nav">
+          <span></span>
+          <button class="btn btn--primary" id="step1Next" disabled>
+            Continue
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────── STEP 2 ───────────────── -->
+    <section class="step step--2" data-step="2">
+      <div class="step__inner step__inner--narrow">
+        <div class="eyebrow">Step 2 · Contact</div>
+        <h1 class="display">What's the best mobile<br/>to reach you on?</h1>
+        <p class="lede">We'll use this only to confirm your first batch and send you weekly delivery reports. No marketing — pinky-promise.</p>
+
+        <div class="field">
+          <label for="phoneInput" class="field__label">Mobile number</label>
+          <div class="field__input">
+            <span class="field__prefix">UK</span>
+            <input id="phoneInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="07123 456 789" />
+          </div>
+          <p class="field__hint" id="phoneHint">Use a UK mobile number — we'll send a single confirmation text.</p>
+        </div>
+
+        <div class="step__nav">
+          <button class="btn btn--ghost" data-back="1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <button class="btn btn--primary" id="step2Next" disabled>
+            Continue
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────── STEP 3 ───────────────── -->
+    <section class="step step--3" data-step="3">
+      <div class="step__inner step__inner--wide">
+        <div class="eyebrow">Step 3 · Build your card</div>
+        <h1 class="display">Design it. Cap it. Ship it.</h1>
+        <p class="lede">Set your monthly volume or spend cap, pick a template, and watch your card come to life.</p>
+
+        <div class="builder">
+          <!-- Left rail: controls -->
+          <aside class="builder__controls">
+            <!-- Pricing tier table -->
+            <section class="panel">
+              <h2 class="panel__title">Volume pricing</h2>
+              <table class="tiers" aria-describedby="tiersHint">
+                <thead><tr><th>DMs / month</th><th>Per DM</th></tr></thead>
+                <tbody id="tiersBody">
+                  <tr data-tier="1"><td>First 10</td><td><span class="pill pill--free">Free trial</span></td></tr>
+                  <tr data-tier="2"><td>11 – 50</td><td>£1.50</td></tr>
+                  <tr data-tier="3"><td>51 – 100</td><td>£1.40</td></tr>
+                  <tr data-tier="4"><td>101 – 200</td><td>£1.30</td></tr>
+                  <tr data-tier="5"><td>201+</td><td>£1.00</td></tr>
+                </tbody>
+              </table>
+              <p class="panel__hint" id="tiersHint">Tiered per-DM rate — pay only for what you send.</p>
+            </section>
+
+            <!-- Cap controls -->
+            <section class="panel">
+              <h2 class="panel__title">Your monthly cap</h2>
+              <div class="toggle" role="tablist" aria-label="Cap mode">
+                <button role="tab" id="capModeDms" class="toggle__btn is-on" data-cap-mode="dms">Max DMs / month</button>
+                <button role="tab" id="capModeSpend" class="toggle__btn" data-cap-mode="spend">Max spend / month</button>
+              </div>
+              <div class="capinput">
+                <span class="capinput__prefix" id="capPrefix">×</span>
+                <input id="capValue" type="number" inputmode="numeric" min="10" step="1" value="100" />
+                <span class="capinput__suffix" id="capSuffix">DMs</span>
+              </div>
+              <div class="capinput__readout">
+                <span>≈ <strong id="capOther">£140.00</strong> / month</span>
+                <span class="dot">·</span>
+                <span><strong id="capPerDm">£1.40</strong> per DM at this volume</span>
+              </div>
+              <p class="trial">🎁 <strong>First 10 DMs free</strong> — your trial begins on first ship.</p>
+            </section>
+
+            <!-- Templates -->
+            <section class="panel">
+              <h2 class="panel__title">Choose a template</h2>
+              <div class="templates">
+                <button class="template is-on" data-template="bold">
+                  <span class="template__thumb template__thumb--bold"></span>
+                  <span class="template__name">Bold Headline</span>
+                </button>
+                <button class="template" data-template="image">
+                  <span class="template__thumb template__thumb--image"></span>
+                  <span class="template__name">Image Led</span>
+                </button>
+                <button class="template" data-template="minimal">
+                  <span class="template__thumb template__thumb--minimal"></span>
+                  <span class="template__name">Minimal Text</span>
+                </button>
+              </div>
+            </section>
+
+            <!-- Assets -->
+            <section class="panel">
+              <h2 class="panel__title">Upload assets</h2>
+              <div class="uploads">
+                <label class="upload">
+                  <input type="file" id="logoInput" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden />
+                  <span class="upload__icon">⬆</span>
+                  <span class="upload__label">Logo</span>
+                  <span class="upload__hint" id="logoStatus">PNG, JPG, SVG · max 5 MB</span>
+                </label>
+                <label class="upload">
+                  <input type="file" id="artworkInput" accept="image/png,image/jpeg,image/webp" hidden />
+                  <span class="upload__icon">⬆</span>
+                  <span class="upload__label">Artwork</span>
+                  <span class="upload__hint" id="artworkStatus">Hero image · max 5 MB</span>
+                </label>
+              </div>
+            </section>
+
+            <!-- Brief + AI -->
+            <section class="panel">
+              <h2 class="panel__title">Design brief</h2>
+              <textarea
+                id="briefInput"
+                rows="4"
+                maxlength="500"
+                placeholder="Tell us what to build. e.g. &lsquo;Premium feel, cream colours, headline about no-obligation home valuations.&rsquo;"
+              ></textarea>
+              <div class="brief__bar">
+                <span class="brief__count"><span id="briefCount">0</span>/500</span>
+                <button class="btn btn--ghost btn--small" id="aiGenerate" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+                  AI Generate
+                </button>
+              </div>
+            </section>
+          </aside>
+
+          <!-- Right rail: preview -->
+          <div class="builder__preview">
+            <div class="preview__sidetoggle" role="tablist" aria-label="Card side">
+              <button class="sidebtn is-on" data-side="front" role="tab">Front</button>
+              <button class="sidebtn" data-side="back" role="tab">Back</button>
+            </div>
+
+            <div class="card-wrap">
+              <div class="card" id="cardPreview" data-template="bold" data-side="front">
+                <!-- FRONT -->
+                <div class="card__face card__face--front">
+                  <div class="card__logo"><img id="cardLogo" alt="" /></div>
+                  <div class="card__media"><img id="cardArtwork" alt="" /></div>
+                  <div class="card__copy">
+                    <h3 class="card__headline" id="cardHeadline">Thinking of moving?</h3>
+                    <p class="card__sub" id="cardSub">A no-obligation valuation, delivered by your local Outra-vetted agent.</p>
+                    <div class="card__cta">Book your free valuation →</div>
+                  </div>
+                </div>
+                <!-- BACK -->
+                <div class="card__face card__face--back">
+                  <div class="card__back-art"><img id="cardArtworkBack" alt="" /></div>
+                  <div class="card__addr">
+                    <span class="addr-line">The Occupier</span>
+                    <span class="addr-line">[Recipient Address]</span>
+                    <span class="addr-line">[Postcode]</span>
+                  </div>
+                  <div class="card__stamp">Royal Mail · 2nd</div>
+                  <div class="card__footer">Sent by Outra · outra.vip</div>
+                </div>
+              </div>
+            </div>
+
+            <p class="preview__hint">Live preview · 5×7 postcard format · 300 dpi at print</p>
+          </div>
+        </div>
+
+        <div class="step__nav">
+          <button class="btn btn--ghost" data-back="2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <button class="btn btn--primary" id="step3Next">
+            Review &amp; checkout
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────────── STEP 4 ───────────────── -->
+    <section class="step step--4" data-step="4">
+      <div class="step__inner step__inner--narrow">
+        <div class="eyebrow">Step 4 · Confirm</div>
+        <h1 class="display">You're ready to ship.</h1>
+        <p class="lede">Today you'll only add your card — we won't charge a penny until your DMs actually go out, and the first 10 are on us.</p>
+
+        <div class="summary">
+          <div class="summary__row">
+            <span>Postcodes</span>
+            <strong id="sumPostcodes">—</strong>
+          </div>
+          <div class="summary__row">
+            <span>Estimated reach</span>
+            <strong id="sumReach">—</strong>
+          </div>
+          <div class="summary__row">
+            <span>Cap</span>
+            <strong id="sumCap">—</strong>
+          </div>
+          <div class="summary__row">
+            <span>Template</span>
+            <strong id="sumTemplate">—</strong>
+          </div>
+          <div class="summary__row summary__row--trial">
+            <span>Free trial</span>
+            <strong>First 10 DMs · £0.00</strong>
+          </div>
+          <div class="summary__row summary__row--total">
+            <span>Due today</span>
+            <strong>£0.00</strong>
+          </div>
+        </div>
+
+        <p class="legal">
+          By continuing you authorise Outra to charge the payment method you supply
+          for usage above the free 10 DMs, up to your monthly cap.
+          You can cancel anytime.
+        </p>
+
+        <div class="step__nav">
+          <button class="btn btn--ghost" data-back="3">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+            Back
+          </button>
+          <button class="btn btn--primary btn--lg" id="step4Pay">
+            Confirm &amp; add card
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <div class="poweredby">
+          Secure card capture by <strong>Stripe</strong>. Your details never touch our servers.
+        </div>
+
+        <div class="error" id="payError" hidden></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>© Outra Ltd. · outra.vip</span>
+    <span>Prototype build · Replace placeholder Stripe keys before going live.</span>
+  </footer>
+
+  <!-- Loading overlay -->
+  <div class="overlay" id="overlay" hidden>
+    <div class="overlay__inner">
+      <div class="overlay__spinner"></div>
+      <p id="overlayText">Setting up your secure checkout…</p>
+    </div>
+  </div>
+
+  <script src="/data/postcodes.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

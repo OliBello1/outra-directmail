@@ -1,0 +1,26 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "public",
+  "functions": {
+    "api/webhook.js": {
+      "memory": 256,
+      "maxDuration": 15
+    },
+    "api/create-checkout-session.js": {
+      "memory": 256,
+      "maxDuration": 10
+    },
+    "api/upload.js": {
+      "memory": 256,
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    { "source": "/signature-segments/DirectMail", "destination": "/index.html" },
+    { "source": "/signature-segments/DirectMail/", "destination": "/index.html" },
+    { "source": "/signature-segments/DirectMail/success", "destination": "/success.html" },
+    { "source": "/signature-segments/directmail", "destination": "/index.html" },
+    { "source": "/signature-segments/directmail/", "destination": "/index.html" },
+    { "source": "/signature-segments/directmail/success", "destination": "/success.html" }
+  ]
+}
