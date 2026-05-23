@@ -631,12 +631,52 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
 .basket__order,
 .basket__checkout { display: flex; flex-direction: column; gap: 18px; }
 
-/* Monthly total + Due today rows */
-.summary__row--monthly { padding-top: 16px; border-top: 1px solid var(--border); }
-.summary__row--monthly > strong { font-size: 17px; }
-.summary__row--total { padding: 16px 0 6px; border-top: 1px solid var(--border-strong); }
-.summary__row--total > span    { font-size: 16px; color: var(--outra-navy); font-weight: 700; }
-.summary__row--total > strong  { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--outra-navy); }
+/* Monthly total row */
+.summary__row--monthly { padding-top: 16px; border-top: 1px solid var(--border-strong); }
+.summary__row--monthly > span    { font-size: 14px; color: var(--outra-navy); font-weight: 700; }
+.summary__row--monthly > strong  { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; color: var(--outra-navy); }
+
+/* Hero "Pay today" block at top of checkout panel */
+.checkout-panel { padding: 0; overflow: hidden; }
+.checkout-panel > h2,
+.checkout-panel > div:not(.paytoday):not(.stripe-mount):not(.error),
+.checkout-panel > p,
+.checkout-panel > button { margin-left: 22px; margin-right: 22px; }
+.checkout-panel > h2:first-of-type { margin-top: 22px; }
+.checkout-panel > .stripe-mount { margin: 0 22px; }
+.checkout-panel > .error,
+.checkout-panel > .legal,
+.checkout-panel > .poweredby { margin-bottom: 22px; }
+
+.paytoday {
+  background: linear-gradient(160deg, var(--outra-navy) 0%, #1a2380 60%, var(--outra-blue) 110%);
+  color: white;
+  padding: 28px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 22px;
+}
+.paytoday__label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255,255,255,0.7);
+  font-weight: 700;
+}
+.paytoday__amount {
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: white;
+  font-variant-numeric: tabular-nums;
+}
+.paytoday__sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.78);
+  margin-top: 4px;
+}
 
 /* Stripe Elements mount + placeholder preview */
 .stripe-mount {
@@ -736,13 +776,18 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
 .error { margin-top: 18px; padding: 14px 16px; background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3); color: #b04545; border-radius: var(--radius-sm); font-size: 13px; }
 
 /* Cap panel (Step 4) — slider-led */
-.cap-panel { margin-bottom: 24px; }
+.cap-panel { margin-bottom: 0; }
 .cap-panel__head {
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 18px;
-  margin-bottom: 22px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
-.toggle--cap { margin: 0; width: 260px; flex: 0 0 auto; }
+.toggle--cap { margin: 0; width: 140px; flex: 0 0 auto; }
+/* Compact variant — used in the basket left column */
+.cap-panel--compact .capslider__value { font-size: 36px; }
+.cap-panel--compact .capslider__suffix { font-size: 13px; }
+.cap-panel--compact .capslider { gap: 10px; }
+.cap-panel--compact .cap-panel__readout { margin-top: 14px; font-size: 13px; }
 
 .capslider {
   display: flex; flex-direction: column; gap: 14px;

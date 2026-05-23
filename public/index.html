@@ -264,40 +264,6 @@
         <h1 class="display">Here's your <em>monthly run</em>.</h1>
         <p class="lede">Card on file, but you're only ever charged for what you actually send — and the first 10 are on us.</p>
 
-        <!-- CAP controls (full width, top) — slider-driven -->
-        <section class="panel cap-panel">
-          <div class="cap-panel__head">
-            <div>
-              <h2 class="panel__title" style="margin-bottom:6px">Set your monthly cap</h2>
-              <p class="panel__hint" style="margin:0">The ceiling — we only bill for what's actually sent.</p>
-            </div>
-            <div class="toggle toggle--cap" role="tablist" aria-label="Cap mode">
-              <button role="tab" class="toggle__btn is-on" data-cap-mode="dms" type="button">Max DMs</button>
-              <button role="tab" class="toggle__btn" data-cap-mode="spend" type="button">Max £</button>
-            </div>
-          </div>
-
-          <div class="capslider">
-            <div class="capslider__readout">
-              <span class="capslider__prefix" id="capPrefix">×</span>
-              <span class="capslider__value" id="capValueDisplay">100</span>
-              <span class="capslider__suffix" id="capSuffix">DMs / month</span>
-            </div>
-            <input id="capValue" type="range" class="capslider__range"
-                   min="20" max="400" step="20" value="100"
-                   aria-label="Monthly cap" />
-            <div class="capslider__scale" id="capScale">
-              <span>20</span><span>100</span><span>200</span><span>300</span><span>400</span>
-            </div>
-          </div>
-
-          <div class="cap-panel__readout">
-            <span>≈ <strong id="capOther">£140.00</strong> / month</span>
-            <span class="dot">·</span>
-            <span><strong id="capPerDm">£1.40</strong> per DM at this volume</span>
-          </div>
-        </section>
-
         <!-- Hidden lookup body still needed by tier-highlight code in JS. -->
         <table hidden><tbody id="tiersBody">
           <tr data-tier="1"></tr><tr data-tier="2"></tr><tr data-tier="3"></tr>
@@ -309,8 +275,40 @@
         <span hidden id="basketDueToday">£0.00</span>
 
         <div class="basket">
-          <!-- LEFT: order summary (Shopify-style) -->
+          <!-- LEFT: cap (compact) + order summary -->
           <aside class="basket__order">
+
+            <!-- Compact cap panel (was full-width above) -->
+            <section class="panel cap-panel cap-panel--compact">
+              <div class="cap-panel__head">
+                <h2 class="panel__title" style="margin:0">Your monthly cap</h2>
+                <div class="toggle toggle--cap" role="tablist" aria-label="Cap mode">
+                  <button role="tab" class="toggle__btn is-on" data-cap-mode="dms" type="button">DMs</button>
+                  <button role="tab" class="toggle__btn" data-cap-mode="spend" type="button">£</button>
+                </div>
+              </div>
+              <div class="capslider">
+                <div class="capslider__readout">
+                  <span class="capslider__value" id="capValueDisplay">100</span>
+                  <span class="capslider__suffix" id="capSuffix">DMs / month</span>
+                </div>
+                <input id="capValue" type="range" class="capslider__range"
+                       min="20" max="400" step="20" value="100"
+                       aria-label="Monthly cap" />
+                <div class="capslider__scale" id="capScale">
+                  <span>20</span><span>100</span><span>200</span><span>300</span><span>400</span>
+                </div>
+              </div>
+              <div class="cap-panel__readout">
+                <span>≈ <strong id="capOther">£140.00</strong> / month at cap</span>
+                <span class="dot">·</span>
+                <span><strong id="capPerDm">£1.40</strong> per DM</span>
+              </div>
+              <!-- Prefix used to live in readout; kept hidden for legacy JS handles -->
+              <span hidden id="capPrefix">×</span>
+            </section>
+
+            <!-- Order summary -->
             <section class="panel">
               <h2 class="panel__title">Order summary</h2>
               <div class="summary summary--flush">
@@ -323,10 +321,6 @@
                   <span>Monthly total at cap</span>
                   <strong id="sumMonthly">£0.00</strong>
                 </div>
-                <div class="summary__row summary__row--total">
-                  <span>Due today</span>
-                  <strong>£0.00</strong>
-                </div>
               </div>
               <p class="trial" style="margin-top:14px">🎁 <strong>First 10 DMs free</strong> — trial begins when your first batch ships.</p>
             </section>
@@ -334,11 +328,18 @@
 
           <!-- RIGHT: payment / checkout -->
           <div class="basket__checkout">
-            <section class="panel">
-              <h2 class="panel__title">Payment details</h2>
+            <section class="panel checkout-panel">
 
-              <!-- Stripe Elements mount point. When Stripe keys are wired in,
-                   JS replaces this with the real Stripe Element. -->
+              <!-- Hero "pay today" amount — makes it impossible to miss -->
+              <div class="paytoday">
+                <span class="paytoday__label">Pay today</span>
+                <strong class="paytoday__amount">£0.00</strong>
+                <span class="paytoday__sub">No charge now · billed monthly only for what you send</span>
+              </div>
+
+              <h2 class="panel__title">Card details</h2>
+
+              <!-- Stripe Elements mount point. JS swaps this for a real Stripe Element when keys are configured. -->
               <div class="stripe-mount" id="stripeMount">
                 <div class="stripe-mount__placeholder">
                   <div class="stripe-mount__row">
@@ -355,7 +356,7 @@
               </div>
 
               <button class="btn btn--primary btn--lg btn--full" id="step4Pay" style="margin-top:18px">
-                Confirm &amp; add card · £0.00 today
+                Confirm &amp; add card
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
               </button>
 
