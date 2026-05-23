@@ -1047,6 +1047,9 @@ body[data-step="4"] .step--4 { display: block; }
 }
 
 /* ─────────────── Overlay ─────────────── */
+/* `[hidden]` must beat `display: grid` — the HTML `hidden` attribute is the
+   single source of truth for visibility. */
+.overlay[hidden] { display: none !important; }
 .overlay {
   position: fixed;
   inset: 0;

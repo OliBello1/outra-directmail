@@ -433,25 +433,16 @@
   }
 
   // ─── Checkout (MOCK MODE) ─────────────────────────────────
-  // This is a prototype build — we skip the actual Stripe call and go
-  // straight to the success page. To re-enable real Stripe Checkout:
-  //   1. Set STRIPE_SECRET_KEY (sk_test_...) on the Vercel project
-  //   2. Replace the mock block below with the commented-out fetch() block
-  //   3. Create the webhook + set STRIPE_WEBHOOK_SECRET
-  $('#step4Pay').addEventListener('click', async () => {
+  // Prototype: no spinner, no API call — redirect straight to the success
+  // page. To re-enable real Stripe Checkout, swap the mock block for the
+  // commented-out fetch() block below and set STRIPE_SECRET_KEY on Vercel.
+  $('#step4Pay').addEventListener('click', () => {
     $('#payError').hidden = true;
-    showOverlay('Setting up your secure checkout…');
-
-    // Brief delay so the overlay feels real, then redirect to /success.
-    // Success page lives under /signature-segments/DirectMail/success when
-    // accessed via outra.vip, else /success.html on the canonical origin.
-    setTimeout(() => {
-      const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
-      const target = isUnderOutraVip
-        ? '/signature-segments/DirectMail/success?sid=mock_' + Date.now()
-        : '/success.html?sid=mock_' + Date.now();
-      window.location.assign(target);
-    }, 1400);
+    const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
+    const target = isUnderOutraVip
+      ? '/signature-segments/DirectMail/success?sid=mock_' + Date.now()
+      : '/success.html?sid=mock_' + Date.now();
+    window.location.assign(target);
 
     /* ─── Real Stripe path, kept for reference ───
     try {
