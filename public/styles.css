@@ -558,12 +558,33 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
   width: 100%; height: 100%;
   object-fit: cover;
 }
+/* Hide the inner front-card overlay elements (copy, logo, etc.) in upload
+   mode — the uploaded image is the design. */
 .card--upload .card__copy,
 .card--upload .card__logo,
-.card--upload .card__back-art,
 .card--upload .card__addr,
 .card--upload .card__stamp,
 .card--upload .card__footer { display: none; }
+
+/* BACK card in upload mode: the uploaded back image lives in `.card__back-art`
+   (NOT `.card__media`). Promote it to fill the whole card instead of its
+   small top-left thumbnail layout. */
+.card--back.card--upload .card__back-art {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  z-index: 1;
+}
+.card--back.card--upload .card__back-art img {
+  display: block !important;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
 /* In upload mode the card itself shouldn't show its template-gradient background
    peeking through transparent PNGs — keep it neutral. */
 .card--upload { background: var(--bg-warm) !important; }
