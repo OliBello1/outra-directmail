@@ -16,6 +16,7 @@
     }
   },
   "rewrites": [
+    { "source": "/success", "destination": "/success.html" },
     { "source": "/signature-segments/DirectMail", "destination": "/index.html" },
     { "source": "/signature-segments/DirectMail/", "destination": "/index.html" },
     { "source": "/signature-segments/DirectMail/success", "destination": "/success.html" },
