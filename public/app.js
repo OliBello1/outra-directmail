@@ -432,10 +432,28 @@
     $('#sumTemplate').textContent = tplLabel;
   }
 
-  // ─── Checkout ─────────────────────────────────────────────
+  // ─── Checkout (MOCK MODE) ─────────────────────────────────
+  // This is a prototype build — we skip the actual Stripe call and go
+  // straight to the success page. To re-enable real Stripe Checkout:
+  //   1. Set STRIPE_SECRET_KEY (sk_test_...) on the Vercel project
+  //   2. Replace the mock block below with the commented-out fetch() block
+  //   3. Create the webhook + set STRIPE_WEBHOOK_SECRET
   $('#step4Pay').addEventListener('click', async () => {
     $('#payError').hidden = true;
     showOverlay('Setting up your secure checkout…');
+
+    // Brief delay so the overlay feels real, then redirect to /success.
+    // Success page lives under /signature-segments/DirectMail/success when
+    // accessed via outra.vip, else /success.html on the canonical origin.
+    setTimeout(() => {
+      const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
+      const target = isUnderOutraVip
+        ? '/signature-segments/DirectMail/success?sid=mock_' + Date.now()
+        : '/success.html?sid=mock_' + Date.now();
+      window.location.assign(target);
+    }, 1400);
+
+    /* ─── Real Stripe path, kept for reference ───
     try {
       const res = await fetch(`${API_ORIGIN}/api/create-checkout-session`, {
         method: 'POST',
@@ -447,10 +465,6 @@
           cap: state.cap,
           design: state.design,
           weeklyEst: state.postcodes.reduce((s, p) => s + p.dmPerWeek, 0),
-          // Send the page's actual origin/href so the backend can build a
-          // success_url that returns the user to the same domain they came
-          // from. The Referer header gets stripped on cross-origin fetches
-          // so we can't rely on it.
           pageOrigin: window.location.origin,
           pageHref: window.location.href
         })
@@ -465,6 +479,7 @@
       e.textContent = `${err.message} — Check that STRIPE_SECRET_KEY is configured on the deployment.`;
       e.hidden = false;
     }
+    */
   });
 
   function showOverlay(text) {
