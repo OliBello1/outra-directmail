@@ -70,7 +70,12 @@ Return JSON only.`;
     if (!apiRes.ok) {
       const errText = await apiRes.text();
       console.error('[ai-generate] anthropic error', apiRes.status, errText);
-      return res.status(502).json({ error: `Anthropic API error (${apiRes.status})` });
+      let msg = `Anthropic API error (${apiRes.status})`;
+      try {
+        const errJson = JSON.parse(errText);
+        if (errJson.error && errJson.error.message) msg = errJson.error.message;
+      } catch { /* leave default */ }
+      return res.status(502).json({ error: msg });
     }
 
     const json = await apiRes.json();

@@ -177,24 +177,31 @@
     items.forEach((el, i) => el.classList.toggle('is-active', i === activeRes));
   });
 
-  // ─── STEP 2 · Phone ───────────────────────────────────────
-  const phoneInput = $('#phoneInput');
-  const phoneHint  = $('#phoneHint');
-  function normalisePhone(v) { return v.replace(/[^\d+]/g, '').replace(/^00/, '+'); }
-  function isValidPhone(v)   { return /^(\+44|0)7\d{9}$/.test(normalisePhone(v)); }
+  // ─── STEP 2 · Email ───────────────────────────────────────
+  const emailInput = $('#emailInput');
+  const emailHint  = $('#emailHint');
+  function isValidEmail(v) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(v || '').trim());
+  }
+  // Used by state + checkout step
+  state.email = state.email || '';
 
-  phoneInput.addEventListener('input', e => {
-    state.phone = e.target.value;
-    const ok = isValidPhone(state.phone);
-    $('#step2Next').disabled = !ok;
-    phoneHint.classList.toggle('is-bad', !ok && state.phone.length >= 7);
-    phoneHint.classList.toggle('is-ok', ok);
-    phoneHint.textContent = ok
-      ? '✓ Looks good — we\u2019ll only text once to confirm.'
-      : (state.phone.length < 7
-          ? 'Use a UK mobile number — we\u2019ll send a single confirmation text.'
-          : 'That doesn\u2019t look like a UK mobile. Try 07… or +447…');
-  });
+  if (emailInput) {
+    emailInput.addEventListener('input', e => {
+      state.email = e.target.value.trim();
+      const ok = isValidEmail(state.email);
+      $('#step2Next').disabled = !ok;
+      emailHint.classList.toggle('is-bad', !ok && state.email.length >= 4);
+      emailHint.classList.toggle('is-ok', ok);
+      emailHint.textContent = ok
+        ? '✓ Looks good — we\u2019ll only email once to confirm your order.'
+        : (state.email.length < 4
+            ? 'We\u2019ll send a single confirmation email — make sure it\u2019s one you check.'
+            : 'That doesn\u2019t look like a valid email. Double-check it?');
+    });
+  }
+  // Re-bind Step 2 Next to email check
+  $('#step2Next').onclick = () => isValidEmail(state.email) && goToStep(3);
 
   // ─── STEP 3 · Mode toggle ─────────────────────────────────
   $$('[data-mode]').forEach(btn => {
@@ -228,43 +235,65 @@
     }
   }
 
-  // ─── STEP 3 · Cap controls ────────────────────────────────
-  const capValueInput = $('#capValue');
-  const capPrefix     = $('#capPrefix');
-  const capSuffix     = $('#capSuffix');
-  const capOther      = $('#capOther');
-  const capPerDm      = $('#capPerDm');
-  const tiersBody     = $('#tiersBody');
+  // ─── STEP 4 · Cap controls (slider) ──────────────────────
+  const capValueInput   = $('#capValue');
+  const capValueDisplay = $('#capValueDisplay');
+  const capPrefix       = $('#capPrefix');
+  const capSuffix       = $('#capSuffix');
+  const capOther        = $('#capOther');
+  const capPerDm        = $('#capPerDm');
+  const capScale        = $('#capScale');
+  const tiersBody       = $('#tiersBody');
+
+  // Slider ranges (step of 20 in both modes per spec)
+  const CAP_RANGES = {
+    dms:   { min: 20,  max: 400, step: 20,  default: 100, scale: [20, 100, 200, 300, 400] },
+    spend: { min: 20,  max: 600, step: 20,  default: 140, scale: [20, 100, 200, 400, 600] }
+  };
 
   function setCapMode(mode) {
     state.cap.mode = mode;
     $$('[data-cap-mode]').forEach(b => b.classList.toggle('is-on', b.dataset.capMode === mode));
-    if (mode === 'dms') {
-      capPrefix.textContent = '×'; capSuffix.textContent = 'DMs';
-      capValueInput.min = 10; capValueInput.step = 1;
-      capValueInput.value = state.cap._lastDms || volumeForBudget(state.cap._lastSpend || 140) || 100;
-    } else {
-      capPrefix.textContent = '£'; capSuffix.textContent = '/mo';
-      capValueInput.min = 15; capValueInput.step = 5;
-      capValueInput.value = state.cap._lastSpend || costForVolume(state.cap._lastDms || 100) || 140;
-    }
-    state.cap.value = parseFloat(capValueInput.value);
+    const r = CAP_RANGES[mode];
+    if (!capValueInput) return;
+    capValueInput.min  = r.min;
+    capValueInput.max  = r.max;
+    capValueInput.step = r.step;
+    const stored = mode === 'dms' ? state.cap._lastDms : state.cap._lastSpend;
+    const v = clampToStep(stored ?? r.default, r);
+    capValueInput.value = v;
+    if (capPrefix) capPrefix.textContent = mode === 'dms' ? '×' : '£';
+    if (capSuffix) capSuffix.textContent = mode === 'dms' ? 'DMs / month' : '/ month';
+    if (capScale) capScale.innerHTML = r.scale.map(n => `<span>${mode === 'spend' ? '£'+n : n}</span>`).join('');
+    state.cap.value = v;
     renderCapReadout();
   }
+  function clampToStep(v, r) {
+    const n = Math.round((v - r.min) / r.step) * r.step + r.min;
+    return Math.min(r.max, Math.max(r.min, n));
+  }
   function renderCapReadout() {
-    const v = parseFloat(capValueInput.value) || 0;
+    const v = parseFloat(capValueInput && capValueInput.value) || 0;
     state.cap.value = v;
+    if (capValueDisplay) capValueDisplay.textContent = state.cap.mode === 'spend' ? '£' + fmt.int(v) : fmt.int(v);
     if (state.cap.mode === 'dms') {
       state.cap._lastDms = v;
-      capOther.textContent = fmt.gbp(costForVolume(v));
-      capPerDm.textContent = fmt.gbp(effectivePerDm(v));
+      if (capOther) capOther.textContent = fmt.gbp(costForVolume(v));
+      if (capPerDm) capPerDm.textContent = fmt.gbp(effectivePerDm(v));
     } else {
       state.cap._lastSpend = v;
       const dms = volumeForBudget(v);
-      capOther.textContent = `${fmt.int(dms)} DMs`;
-      capPerDm.textContent = fmt.gbp(effectivePerDm(dms));
+      if (capOther) capOther.textContent = `${fmt.int(dms)} DMs`;
+      if (capPerDm) capPerDm.textContent = fmt.gbp(effectivePerDm(dms));
     }
     renderTiersHighlight();
+    renderBasket();
+    // Visualise slider fill
+    if (capValueInput) {
+      const r = CAP_RANGES[state.cap.mode];
+      const pct = ((v - r.min) / (r.max - r.min)) * 100;
+      capValueInput.style.setProperty('--fill', pct + '%');
+    }
   }
   function renderTiersHighlight() {
     const dms = state.cap.mode === 'dms' ? state.cap.value : volumeForBudget(state.cap.value);

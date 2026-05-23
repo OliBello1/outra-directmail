@@ -81,16 +81,16 @@
     <section class="step step--2" data-step="2">
       <div class="step__inner step__inner--narrow">
         <div class="eyebrow">Step 2 · Contact</div>
-        <h1 class="display">Where can we <em>reach you</em>?</h1>
-        <p class="lede">We'll use this only to confirm your first batch and send weekly delivery reports. No marketing — promise.</p>
+        <h1 class="display">Where can we <em>email you</em>?</h1>
+        <p class="lede">We'll send your order confirmation, design proofs to approve, and weekly delivery reports here. No marketing — promise.</p>
 
         <div class="field">
-          <label for="phoneInput" class="field__label">Mobile number</label>
+          <label for="emailInput" class="field__label">Email address</label>
           <div class="field__input">
-            <span class="field__prefix">UK</span>
-            <input id="phoneInput" type="tel" inputmode="tel" autocomplete="tel" placeholder="07123 456 789" />
+            <span class="field__prefix">@</span>
+            <input id="emailInput" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" />
           </div>
-          <p class="field__hint" id="phoneHint">Use a UK mobile number — we'll send a single confirmation text.</p>
+          <p class="field__hint" id="emailHint">We'll send a single confirmation email — make sure it's one you check.</p>
         </div>
 
         <div class="step__nav">
@@ -112,63 +112,21 @@
         <h1 class="display">Design it. <em>Cap it.</em> Ship it.</h1>
         <p class="lede">Set your monthly volume or spend cap, then either build the card with our designer (or AI) — or upload your own print-ready artwork.</p>
 
-        <!-- Mode chooser -->
-        <div class="modechoose" role="tablist" aria-label="Design mode">
-          <button class="modechoose__card is-on" data-mode="designer" role="tab">
-            <span class="modechoose__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19c.5-1.5 2-3 4-3 1 0 2 .5 3 2"/><path d="M5 21l1.5-4.5L18 5l3 3L9.5 19.5z"/><path d="M14 8l3 3"/></svg>
-            </span>
-            <span class="modechoose__title">Use our designer tool</span>
-            <span class="modechoose__sub">Pick a template, upload your logo + imagery, write a brief, or let Claude generate the design.</span>
+        <!-- Compact mode chooser -->
+        <div class="modepick" role="tablist" aria-label="Design mode">
+          <button class="modepick__btn is-on" data-mode="designer" role="tab" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 19c.5-1.5 2-3 4-3 1 0 2 .5 3 2"/><path d="M5 21l1.5-4.5L18 5l3 3L9.5 19.5z"/></svg>
+            <span>Designer tool</span>
           </button>
-          <button class="modechoose__card" data-mode="upload" role="tab">
-            <span class="modechoose__icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/></svg>
-            </span>
-            <span class="modechoose__title">Upload full artwork</span>
-            <span class="modechoose__sub">Already have print-ready files? Upload front + back as images and skip the builder.</span>
+          <button class="modepick__btn" data-mode="upload" role="tab" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 16v3a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3"/><path d="M12 3v13"/><path d="M7 8l5-5 5 5"/></svg>
+            <span>Upload artwork</span>
           </button>
         </div>
 
         <div class="builder">
           <!-- LEFT: controls -->
           <aside class="builder__controls">
-            <!-- Pricing tiers (always visible) -->
-            <section class="panel">
-              <h2 class="panel__title">Volume pricing</h2>
-              <table class="tiers">
-                <thead><tr><th>DMs / month</th><th>Per DM</th></tr></thead>
-                <tbody id="tiersBody">
-                  <tr data-tier="1"><td>First 10</td><td><span class="pill pill--free">Free trial</span></td></tr>
-                  <tr data-tier="2"><td>11 – 50</td><td>£1.50</td></tr>
-                  <tr data-tier="3"><td>51 – 100</td><td>£1.40</td></tr>
-                  <tr data-tier="4"><td>101 – 200</td><td>£1.30</td></tr>
-                  <tr data-tier="5"><td>201+</td><td>£1.00</td></tr>
-                </tbody>
-              </table>
-              <p class="panel__hint">Tiered per-DM rate — pay only for what you send.</p>
-            </section>
-
-            <!-- Cap (always visible) -->
-            <section class="panel">
-              <h2 class="panel__title">Your monthly cap</h2>
-              <div class="toggle" role="tablist" aria-label="Cap mode">
-                <button role="tab" class="toggle__btn is-on" data-cap-mode="dms">Max DMs / month</button>
-                <button role="tab" class="toggle__btn" data-cap-mode="spend">Max spend / month</button>
-              </div>
-              <div class="capinput">
-                <span class="capinput__prefix" id="capPrefix">×</span>
-                <input id="capValue" type="number" inputmode="numeric" min="10" step="1" value="100" />
-                <span class="capinput__suffix" id="capSuffix">DMs</span>
-              </div>
-              <div class="capinput__readout">
-                <span>≈ <strong id="capOther">£140.00</strong> / month</span>
-                <span class="dot">·</span>
-                <span><strong id="capPerDm">£1.40</strong> per DM at this volume</span>
-              </div>
-              <p class="trial">🎁 <strong>First 10 DMs free</strong> — trial begins on first ship.</p>
-            </section>
-
             <!-- MODE: Designer -->
             <div class="mode-panel mode-panel--designer">
               <section class="panel">
@@ -306,9 +264,58 @@
         <h1 class="display">Here's your <em>monthly run</em>.</h1>
         <p class="lede">Card on file, but you're only ever charged for what you actually send — and the first 10 are on us.</p>
 
+        <!-- CAP controls (full width, top) — slider-driven -->
+        <section class="panel cap-panel">
+          <div class="cap-panel__head">
+            <div>
+              <h2 class="panel__title" style="margin-bottom:6px">Set your monthly cap</h2>
+              <p class="panel__hint" style="margin:0">The ceiling — we only bill for what's actually sent.</p>
+            </div>
+            <div class="toggle toggle--cap" role="tablist" aria-label="Cap mode">
+              <button role="tab" class="toggle__btn is-on" data-cap-mode="dms" type="button">Max DMs</button>
+              <button role="tab" class="toggle__btn" data-cap-mode="spend" type="button">Max £</button>
+            </div>
+          </div>
+
+          <div class="capslider">
+            <div class="capslider__readout">
+              <span class="capslider__prefix" id="capPrefix">×</span>
+              <span class="capslider__value" id="capValueDisplay">100</span>
+              <span class="capslider__suffix" id="capSuffix">DMs / month</span>
+            </div>
+            <input id="capValue" type="range" class="capslider__range"
+                   min="20" max="400" step="20" value="100"
+                   aria-label="Monthly cap" />
+            <div class="capslider__scale" id="capScale">
+              <span>20</span><span>100</span><span>200</span><span>300</span><span>400</span>
+            </div>
+          </div>
+
+          <div class="cap-panel__readout">
+            <span>≈ <strong id="capOther">£140.00</strong> / month</span>
+            <span class="dot">·</span>
+            <span><strong id="capPerDm">£1.40</strong> per DM at this volume</span>
+          </div>
+        </section>
+
         <div class="basket">
-          <!-- LEFT: live cost breakdown -->
+          <!-- LEFT: pricing tiers + live cost breakdown -->
           <aside class="basket__breakdown">
+            <section class="panel">
+              <h2 class="panel__title">Volume pricing</h2>
+              <table class="tiers">
+                <thead><tr><th>DMs / month</th><th>Per DM</th></tr></thead>
+                <tbody id="tiersBody">
+                  <tr data-tier="1"><td>First 10</td><td><span class="pill pill--free">Free trial</span></td></tr>
+                  <tr data-tier="2"><td>11 – 50</td><td>£1.50</td></tr>
+                  <tr data-tier="3"><td>51 – 100</td><td>£1.40</td></tr>
+                  <tr data-tier="4"><td>101 – 200</td><td>£1.30</td></tr>
+                  <tr data-tier="5"><td>201+</td><td>£1.00</td></tr>
+                </tbody>
+              </table>
+              <p class="panel__hint">Tiered per-DM rate — pay only for what you send.</p>
+            </section>
+
             <section class="panel">
               <h2 class="panel__title">Cost breakdown · this month</h2>
               <table class="tiers tiers--basket">
@@ -320,7 +327,7 @@
                   <tr class="tiers__today"><td colspan="3">Due today</td><td class="num"><strong id="basketDueToday">£0.00</strong></td></tr>
                 </tfoot>
               </table>
-              <p class="panel__hint">Tiered pricing: each block is billed at its own rate. The cap is the ceiling, not the floor.</p>
+              <p class="trial" style="margin-top:14px">🎁 <strong>First 10 DMs free</strong> — trial begins on first ship.</p>
             </section>
           </aside>
 
