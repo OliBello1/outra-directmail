@@ -415,7 +415,7 @@
     }
   });
 
-  // ─── STEP 4 · Summary ─────────────────────────────────────
+  // ─── STEP 4 · Summary + live basket ──────────────────────
   function renderSummary() {
     const weekly = state.postcodes.reduce((s, p) => s + p.dmPerWeek, 0);
     const monthly = Math.round(weekly * 4.33);
@@ -430,6 +430,47 @@
 
     const tplLabel = { bold: 'Bold Headline', image: 'Image Led', minimal: 'Minimal Text' }[state.design.template];
     $('#sumTemplate').textContent = tplLabel;
+
+    renderBasket();
+  }
+
+  function renderBasket() {
+    const dms = state.cap.mode === 'dms'
+      ? Math.max(0, Math.floor(state.cap.value))
+      : volumeForBudget(state.cap.value);
+
+    const tbody = $('#basketTiersBody');
+    if (!tbody) return;
+
+    let remaining = dms;
+    let total = 0;
+    const rows = TIERS.map(t => {
+      const tierSize = t.to - t.from + 1;
+      const take = Math.max(0, Math.min(remaining, tierSize));
+      remaining -= take;
+      const subtotal = take * t.perDm;
+      total += subtotal;
+      const range = t.to === Infinity ? `${t.from}+` : `${t.from} – ${t.to}`;
+      const rateLabel = t.perDm === 0 ? 'Free' : fmt.gbp(t.perDm);
+      const isActive = take > 0;
+      const isEmpty  = take === 0;
+      return `
+        <tr class="${isActive ? 'is-active' : ''} ${isEmpty ? 'is-empty' : ''}">
+          <td>${range} DMs</td>
+          <td>${fmt.int(take)}</td>
+          <td>${rateLabel}</td>
+          <td class="num">${fmt.gbp(subtotal)}</td>
+        </tr>
+      `;
+    }).join('');
+    tbody.innerHTML = rows;
+
+    // Free 10 trial: 10 DMs * lowest paid tier rate they would have hit (£1.50)
+    // — for clarity show it explicitly so the user sees the saving.
+    const trialCredit = 0; // The first 10 are already £0 in TIERS, so no extra credit.
+    $('#basketTrialCredit').textContent = `−${fmt.gbp(trialCredit)}`;
+    $('#basketMonthly').textContent     = fmt.gbp(total);
+    $('#basketDueToday').textContent    = fmt.gbp(0);
   }
 
   // ─── Checkout (MOCK MODE) ─────────────────────────────────

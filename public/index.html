@@ -272,60 +272,95 @@
 
     <!-- ───────────────── STEP 4 ───────────────── -->
     <section class="step step--4" data-step="4">
-      <div class="step__inner step__inner--narrow">
-        <div class="eyebrow">Step 4 · Confirm</div>
-        <h1 class="display">You're ready to ship.</h1>
-        <p class="lede">Today you'll only add your card — we won't charge a penny until your DMs actually go out, and the first 10 are on us.</p>
+      <div class="step__inner step__inner--wide">
+        <div class="eyebrow">Step 4 · Your basket</div>
+        <h1 class="display">Here's your monthly run.</h1>
+        <p class="lede">Card on file, but you're only ever charged for what you actually send — and the first 10 are on us.</p>
 
-        <div class="summary">
-          <div class="summary__row">
-            <span>Postcodes</span>
-            <strong id="sumPostcodes">—</strong>
-          </div>
-          <div class="summary__row">
-            <span>Estimated reach</span>
-            <strong id="sumReach">—</strong>
-          </div>
-          <div class="summary__row">
-            <span>Cap</span>
-            <strong id="sumCap">—</strong>
-          </div>
-          <div class="summary__row">
-            <span>Template</span>
-            <strong id="sumTemplate">—</strong>
-          </div>
-          <div class="summary__row summary__row--trial">
-            <span>Free trial</span>
-            <strong>First 10 DMs · £0.00</strong>
-          </div>
-          <div class="summary__row summary__row--total">
-            <span>Due today</span>
-            <strong>£0.00</strong>
+        <div class="basket">
+          <!-- LEFT: live cost breakdown -->
+          <aside class="basket__breakdown">
+            <section class="panel">
+              <h2 class="panel__title">Cost breakdown · this month</h2>
+              <table class="tiers tiers--basket">
+                <thead><tr><th>Tier</th><th>DMs</th><th>Rate</th><th class="num">Subtotal</th></tr></thead>
+                <tbody id="basketTiersBody">
+                  <!-- rows injected by app.js -->
+                </tbody>
+                <tfoot>
+                  <tr class="tiers__free">
+                    <td colspan="3">Free trial credit · first 10 DMs</td>
+                    <td class="num" id="basketTrialCredit">−£0.00</td>
+                  </tr>
+                  <tr class="tiers__total">
+                    <td colspan="3"><strong>Monthly total at cap</strong></td>
+                    <td class="num"><strong id="basketMonthly">£0.00</strong></td>
+                  </tr>
+                  <tr class="tiers__today">
+                    <td colspan="3">Due today</td>
+                    <td class="num"><strong id="basketDueToday">£0.00</strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+              <p class="panel__hint">Tiered pricing: each block is billed at its own rate. You only pay for DMs actually sent — the cap is the ceiling, not the floor.</p>
+            </section>
+          </aside>
+
+          <!-- RIGHT: order recap + CTA -->
+          <div class="basket__order">
+            <section class="panel">
+              <h2 class="panel__title">Order summary</h2>
+              <div class="summary summary--flush">
+                <div class="summary__row">
+                  <span>Postcodes</span>
+                  <strong id="sumPostcodes">—</strong>
+                </div>
+                <div class="summary__row">
+                  <span>Estimated reach</span>
+                  <strong id="sumReach">—</strong>
+                </div>
+                <div class="summary__row">
+                  <span>Cap</span>
+                  <strong id="sumCap">—</strong>
+                </div>
+                <div class="summary__row">
+                  <span>Template</span>
+                  <strong id="sumTemplate">—</strong>
+                </div>
+                <div class="summary__row summary__row--trial">
+                  <span>Free trial</span>
+                  <strong>First 10 DMs · £0.00</strong>
+                </div>
+              </div>
+            </section>
+
+            <div class="checkout-cta">
+              <div class="checkout-cta__row">
+                <span>Due today</span>
+                <strong>£0.00</strong>
+              </div>
+              <button class="btn btn--primary btn--lg btn--full" id="step4Pay">
+                Confirm &amp; add card
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+              </button>
+              <p class="legal">
+                By continuing you authorise Outra to charge the payment method you supply
+                for usage above the free 10 DMs, up to your monthly cap. Cancel anytime.
+              </p>
+              <div class="poweredby">Secure card capture by <strong>Stripe</strong>.</div>
+            </div>
+
+            <div class="error" id="payError" hidden></div>
           </div>
         </div>
-
-        <p class="legal">
-          By continuing you authorise Outra to charge the payment method you supply
-          for usage above the free 10 DMs, up to your monthly cap.
-          You can cancel anytime.
-        </p>
 
         <div class="step__nav">
           <button class="btn btn--ghost" data-back="3">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
-            Back
+            Back to design
           </button>
-          <button class="btn btn--primary btn--lg" id="step4Pay">
-            Confirm &amp; add card
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
-          </button>
+          <span></span>
         </div>
-
-        <div class="poweredby">
-          Secure card capture by <strong>Stripe</strong>. Your details never touch our servers.
-        </div>
-
-        <div class="error" id="payError" hidden></div>
       </div>
     </section>
 
