@@ -481,18 +481,110 @@
     if (sumMonthly) sumMonthly.textContent = fmt.gbp(total);
   }
 
-  // ─── Checkout (MOCK MODE — no spinner, straight to success) ─
-  $('#step4Pay').addEventListener('click', () => {
+  // ─── Stripe Elements (real) — falls back to mock if not configured ─
+  let stripe = null;
+  let cardElement = null;
+  let stripeReady = false;
+
+  async function initStripe() {
+    try {
+      const cfg = await fetch(`${API_ORIGIN}/api/config`).then(r => r.json()).catch(() => ({}));
+      if (!cfg.stripeReady || !cfg.stripePublishableKey || typeof Stripe === 'undefined') {
+        console.warn('[stripe] not configured — falling back to mock checkout');
+        return;
+      }
+      stripe = Stripe(cfg.stripePublishableKey);
+      const elements = stripe.elements();
+      const style = {
+        base: {
+          fontFamily: '"Plus Jakarta Sans", -apple-system, sans-serif',
+          fontSize: '15px',
+          fontSmoothing: 'antialiased',
+          color: '#131417',
+          '::placeholder': { color: '#8e8ea0' }
+        },
+        invalid: { color: '#b04545', iconColor: '#b04545' }
+      };
+      cardElement = elements.create('card', { style, hidePostalCode: false });
+      const mount = $('#stripeMount');
+      if (mount) {
+        mount.innerHTML = '<div id="stripeCardElement" style="padding:14px 16px;background:white;border:1px solid var(--border-strong);border-radius:var(--radius-sm);"></div>';
+        cardElement.mount('#stripeCardElement');
+        stripeReady = true;
+      }
+    } catch (err) {
+      console.error('[stripe] init failed', err);
+    }
+  }
+
+  $('#step4Pay').addEventListener('click', async () => {
     $('#payError').hidden = true;
-    const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
-    const target = isUnderOutraVip
-      ? '/signature-segments/DirectMail/success?sid=mock_' + Date.now()
-      : '/success.html?sid=mock_' + Date.now();
-    window.location.assign(target);
+
+    // MOCK PATH — Stripe not configured, just jump to success.
+    if (!stripeReady) {
+      const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
+      const target = isUnderOutraVip
+        ? '/signature-segments/DirectMail/success?sid=mock_' + Date.now()
+        : '/success.html?sid=mock_' + Date.now();
+      window.location.assign(target);
+      return;
+    }
+
+    // REAL STRIPE PATH
+    const btn = $('#step4Pay');
+    btn.disabled = true;
+    const originalHtml = btn.innerHTML;
+    btn.innerHTML = 'Securing your card…';
+
+    try {
+      // 1. Ask the backend to create a SetupIntent
+      const intentRes = await fetch(`${API_ORIGIN}/api/create-setup-intent`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: state.email,
+          postcodes: state.postcodes.map(p => p.code),
+          cap: state.cap,
+          design: state.design
+        })
+      });
+      const intentBody = await intentRes.json();
+      if (!intentRes.ok || !intentBody.clientSecret) {
+        throw new Error(intentBody.error || `Setup intent failed (${intentRes.status})`);
+      }
+
+      // 2. Confirm the card with Stripe (entirely client-side from here)
+      const { setupIntent, error } = await stripe.confirmCardSetup(intentBody.clientSecret, {
+        payment_method: {
+          card: cardElement,
+          billing_details: { email: state.email || undefined }
+        }
+      });
+
+      if (error) throw new Error(error.message || 'Card was declined.');
+      if (!setupIntent || setupIntent.status !== 'succeeded') {
+        throw new Error('Card setup did not complete. Please try again.');
+      }
+
+      // 3. Success — redirect
+      const isUnderOutraVip = /\/signature-segments\/(DirectMail|directmail)/i.test(window.location.pathname);
+      const target = isUnderOutraVip
+        ? '/signature-segments/DirectMail/success?sid=' + setupIntent.id
+        : '/success.html?sid=' + setupIntent.id;
+      window.location.assign(target);
+    } catch (err) {
+      console.error('[checkout]', err);
+      const e = $('#payError');
+      e.textContent = err.message || 'Something went wrong with your card. Please try again.';
+      e.hidden = false;
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+    }
   });
 
   // ─── Init ─────────────────────────────────────────────────
   setCapMode('dms');
   renderCapReadout();
   applyPreviewMode();
+  initStripe();
 })();
