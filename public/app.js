@@ -6,6 +6,13 @@
 (function () {
   'use strict';
 
+  // ─── Origin handling ──────────────────────────────────────
+  // When this page is proxied via outra.vip (or any other host that rewrites
+  // to outra-directmail.vercel.app), relative API paths like '/api/upload'
+  // would resolve against the proxy origin (outra.vip/api/...) which 404s.
+  // Always call the API on the project's canonical origin.
+  const API_ORIGIN = 'https://outra-directmail.vercel.app';
+
   // ─── Pricing tier function ────────────────────────────────
   // Per-DM cost as a function of monthly volume (after the free-10 trial).
   // First 10 DMs: free  ·  11–50: £1.50  ·  51–100: £1.40  ·  101–200: £1.30  ·  201+: £1.00
@@ -369,7 +376,7 @@
       const { upload } = await import('https://esm.sh/@vercel/blob@0.23.4/client');
       const blob = await upload(`directmail/${slot}/${Date.now()}-${file.name}`, file, {
         access: 'public',
-        handleUploadUrl: '/api/upload'
+        handleUploadUrl: `${API_ORIGIN}/api/upload`
       });
       wrap.classList.remove('is-loading');
       wrap.classList.add('is-ok');
@@ -430,7 +437,7 @@
     $('#payError').hidden = true;
     showOverlay('Setting up your secure checkout…');
     try {
-      const res = await fetch('/api/create-checkout-session', {
+      const res = await fetch(`${API_ORIGIN}/api/create-checkout-session`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -439,7 +446,13 @@
           phone: state.phone,
           cap: state.cap,
           design: state.design,
-          weeklyEst: state.postcodes.reduce((s, p) => s + p.dmPerWeek, 0)
+          weeklyEst: state.postcodes.reduce((s, p) => s + p.dmPerWeek, 0),
+          // Send the page's actual origin/href so the backend can build a
+          // success_url that returns the user to the same domain they came
+          // from. The Referer header gets stripped on cross-origin fetches
+          // so we can't rely on it.
+          pageOrigin: window.location.origin,
+          pageHref: window.location.href
         })
       });
       const body = await res.json().catch(() => ({}));

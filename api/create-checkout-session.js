@@ -32,7 +32,8 @@ module.exports = async (req, res) => {
   }
   body = body || {};
 
-  const { postcodes = [], phone = '', cap = {}, design = {}, weeklyEst = 0 } = body;
+  const { postcodes = [], phone = '', cap = {}, design = {}, weeklyEst = 0,
+          pageOrigin = '', pageHref = '' } = body;
 
   if (!Array.isArray(postcodes) || postcodes.length === 0) {
     return res.status(400).json({ error: 'At least one postcode must be selected.' });
@@ -41,24 +42,28 @@ module.exports = async (req, res) => {
     return res.status(400).json({ error: 'Phone number is required.' });
   }
 
-  // Resolve the base URL — prefer the env var (e.g. https://outra.vip), else the request origin.
-  // The success/cancel URLs route through the outra.vip rewrites if available.
-  const origin =
-    process.env.PUBLIC_BASE_URL ||
-    (req.headers['x-forwarded-proto'] && req.headers['x-forwarded-host']
-      ? `${req.headers['x-forwarded-proto']}://${req.headers['x-forwarded-host']}`
-      : `https://${req.headers.host}`);
+  // Build success/cancel URLs that return the user to whatever domain they
+  // came from. The client sends `pageOrigin` (e.g. https://outra.vip) and
+  // `pageHref` (the full URL). Cross-origin fetch strips the Referer header,
+  // so we can't rely on req.headers.referer.
+  //
+  // We accept only known origins as a basic safety net (Stripe will reject
+  // arbitrary domains anyway, but it's good hygiene).
+  const ALLOWED_ORIGINS = new Set([
+    'https://outra.vip',
+    'https://www.outra.vip',
+    'https://outra-directmail.vercel.app'
+  ]);
+  const fallbackOrigin = `https://${req.headers.host}`;
+  const safeOrigin = ALLOWED_ORIGINS.has(pageOrigin) ? pageOrigin : fallbackOrigin;
+  const isUnderOutraVip = safeOrigin === 'https://outra.vip' || safeOrigin === 'https://www.outra.vip';
 
-  // Detect whether we're being served under /signature-segments/DirectMail
-  // so the redirect comes back to the same path the user came from.
-  const referer = req.headers.referer || '';
-  const isUnderOutraVip = referer.includes('/signature-segments/DirectMail') || referer.includes('/signature-segments/directmail');
   const successBase = isUnderOutraVip
-    ? `${new URL(referer).origin}/signature-segments/DirectMail/success`
-    : `${origin}/success.html`;
+    ? `${safeOrigin}/signature-segments/DirectMail/success`
+    : `${safeOrigin}/success.html`;
   const cancelBase = isUnderOutraVip
-    ? `${new URL(referer).origin}/signature-segments/DirectMail`
-    : `${origin}/`;
+    ? `${safeOrigin}/signature-segments/DirectMail`
+    : `${safeOrigin}/`;
 
   // Stripe metadata values are capped at 500 chars per value and 50 keys per object.
   const safe = (v, max = 500) => {
