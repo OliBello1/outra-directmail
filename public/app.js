@@ -476,6 +476,9 @@
     $('#basketTrialCredit').textContent = `−${fmt.gbp(0)}`;
     $('#basketMonthly').textContent     = fmt.gbp(total);
     $('#basketDueToday').textContent    = fmt.gbp(0);
+    // Mirror onto the visible Shopify-style summary
+    const sumMonthly = $('#sumMonthly');
+    if (sumMonthly) sumMonthly.textContent = fmt.gbp(total);
   }
 
   // ─── Checkout (MOCK MODE — no spinner, straight to success) ─

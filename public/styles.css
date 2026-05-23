@@ -599,10 +599,71 @@ body[data-design-mode="upload"]   .mode-panel--upload   { display: block; }
 
 .preview__hint { text-align: center; color: var(--text-muted); font-size: 12px; }
 
-/* ─────────────── STEP 4 · Basket ─────────────── */
-.basket { display: grid; grid-template-columns: 1.1fr 1fr; gap: 28px; align-items: start; margin-bottom: 24px; }
-.basket__breakdown,
-.basket__order { display: flex; flex-direction: column; gap: 18px; }
+/* ─────────────── STEP 4 · Basket (Shopify-style) ─────────────── */
+.basket {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.15fr);
+  gap: 32px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+.basket__order,
+.basket__checkout { display: flex; flex-direction: column; gap: 18px; }
+
+/* Monthly total + Due today rows */
+.summary__row--monthly { padding-top: 16px; border-top: 1px solid var(--border); }
+.summary__row--monthly > strong { font-size: 17px; }
+.summary__row--total { padding: 16px 0 6px; border-top: 1px solid var(--border-strong); }
+.summary__row--total > span    { font-size: 16px; color: var(--outra-navy); font-weight: 700; }
+.summary__row--total > strong  { font-size: 26px; font-weight: 800; letter-spacing: -0.02em; color: var(--outra-navy); }
+
+/* Stripe Elements mount + placeholder preview */
+.stripe-mount {
+  background: var(--bg-warm);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 18px;
+}
+.stripe-mount__placeholder { display: flex; flex-direction: column; gap: 12px; }
+.stripe-mount__row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+.stripe-mount__row > span { color: var(--text-muted); font-weight: 600; }
+.stripe-mount__row code {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 600;
+  color: var(--outra-navy);
+  letter-spacing: 0.02em;
+}
+.stripe-mount__row--split {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+  background: transparent; border: none; padding: 0;
+}
+.stripe-mount__row--split > div {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+  font-size: 13px;
+}
+.stripe-mount__row--split span { color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.stripe-mount__row--split code { color: var(--outra-navy); font-weight: 600; }
+.stripe-mount__hint {
+  font-size: 11px; color: var(--text-muted);
+  margin-top: 4px; line-height: 1.5;
+}
+.stripe-mount__hint code {
+  background: rgba(10,19,91,0.06);
+  padding: 1px 5px; border-radius: 4px;
+  font-family: ui-monospace, monospace;
+  font-size: 10px; color: var(--outra-navy);
+}
 
 .tiers--basket { font-size: 14px; }
 .tiers--basket th, .tiers--basket td { padding: 12px 8px; }

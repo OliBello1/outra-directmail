@@ -298,58 +298,72 @@
           </div>
         </section>
 
+        <!-- Hidden lookup body still needed by tier-highlight code in JS. -->
+        <table hidden><tbody id="tiersBody">
+          <tr data-tier="1"></tr><tr data-tier="2"></tr><tr data-tier="3"></tr>
+          <tr data-tier="4"></tr><tr data-tier="5"></tr>
+        </tbody></table>
+        <table hidden><tbody id="basketTiersBody"></tbody></table>
+        <span hidden id="basketTrialCredit">−£0.00</span>
+        <span hidden id="basketMonthly">£0.00</span>
+        <span hidden id="basketDueToday">£0.00</span>
+
         <div class="basket">
-          <!-- LEFT: live cost breakdown only -->
-          <aside class="basket__breakdown">
-            <!-- Hidden lookup body still needs to exist for tier-highlight code,
-                 but it's not rendered. -->
-            <table hidden><tbody id="tiersBody">
-              <tr data-tier="1"></tr><tr data-tier="2"></tr><tr data-tier="3"></tr>
-              <tr data-tier="4"></tr><tr data-tier="5"></tr>
-            </tbody></table>
-
-            <section class="panel">
-              <h2 class="panel__title">Cost breakdown · this month</h2>
-              <table class="tiers tiers--basket">
-                <thead><tr><th>Tier</th><th>DMs</th><th>Rate</th><th class="num">Subtotal</th></tr></thead>
-                <tbody id="basketTiersBody"></tbody>
-                <tfoot>
-                  <tr class="tiers__free"><td colspan="3">Free trial credit · first 10 DMs</td><td class="num" id="basketTrialCredit">−£0.00</td></tr>
-                  <tr class="tiers__total"><td colspan="3"><strong>Monthly total at cap</strong></td><td class="num"><strong id="basketMonthly">£0.00</strong></td></tr>
-                  <tr class="tiers__today"><td colspan="3">Due today</td><td class="num"><strong id="basketDueToday">£0.00</strong></td></tr>
-                </tfoot>
-              </table>
-              <p class="trial" style="margin-top:14px">🎁 <strong>First 10 DMs free</strong> — trial begins on first ship.</p>
-            </section>
-          </aside>
-
-          <!-- RIGHT: order recap + CTA -->
-          <div class="basket__order">
+          <!-- LEFT: order summary (Shopify-style) -->
+          <aside class="basket__order">
             <section class="panel">
               <h2 class="panel__title">Order summary</h2>
               <div class="summary summary--flush">
                 <div class="summary__row"><span>Postcodes</span><strong id="sumPostcodes">—</strong></div>
                 <div class="summary__row"><span>Estimated reach</span><strong id="sumReach">—</strong></div>
-                <div class="summary__row"><span>Cap</span><strong id="sumCap">—</strong></div>
+                <div class="summary__row"><span>Monthly cap</span><strong id="sumCap">—</strong></div>
                 <div class="summary__row"><span>Design</span><strong id="sumTemplate">—</strong></div>
                 <div class="summary__row summary__row--trial"><span>Free trial</span><strong>First 10 DMs · £0.00</strong></div>
+                <div class="summary__row summary__row--monthly">
+                  <span>Monthly total at cap</span>
+                  <strong id="sumMonthly">£0.00</strong>
+                </div>
+                <div class="summary__row summary__row--total">
+                  <span>Due today</span>
+                  <strong>£0.00</strong>
+                </div>
               </div>
+              <p class="trial" style="margin-top:14px">🎁 <strong>First 10 DMs free</strong> — trial begins when your first batch ships.</p>
             </section>
+          </aside>
 
-            <div class="checkout-cta">
-              <div class="checkout-cta__row">
-                <span>Due today</span>
-                <strong>£0.00</strong>
+          <!-- RIGHT: payment / checkout -->
+          <div class="basket__checkout">
+            <section class="panel">
+              <h2 class="panel__title">Payment details</h2>
+
+              <!-- Stripe Elements mount point. When Stripe keys are wired in,
+                   JS replaces this with the real Stripe Element. -->
+              <div class="stripe-mount" id="stripeMount">
+                <div class="stripe-mount__placeholder">
+                  <div class="stripe-mount__row">
+                    <span>Card number</span>
+                    <code>4242 4242 4242 4242</code>
+                  </div>
+                  <div class="stripe-mount__row stripe-mount__row--split">
+                    <div><span>Expiry</span><code>12 / 34</code></div>
+                    <div><span>CVC</span><code>123</code></div>
+                    <div><span>Postcode</span><code>SW1A 1AA</code></div>
+                  </div>
+                  <p class="stripe-mount__hint">Test mode preview. Add <code>STRIPE_PUBLISHABLE_KEY</code> on the Vercel project to swap in the live Stripe Element.</p>
+                </div>
               </div>
-              <button class="btn btn--primary btn--lg btn--full" id="step4Pay">
-                Confirm &amp; add card
+
+              <button class="btn btn--primary btn--lg btn--full" id="step4Pay" style="margin-top:18px">
+                Confirm &amp; add card · £0.00 today
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
               </button>
-              <p class="legal">By continuing you authorise Outra to charge the payment method you supply for usage above the free 10 DMs, up to your monthly cap. Cancel anytime.</p>
-              <div class="poweredby">Secure card capture by <strong>Stripe</strong>.</div>
-            </div>
 
-            <div class="error" id="payError" hidden></div>
+              <p class="legal">By continuing you authorise Outra to charge the payment method you supply for usage above the free 10 DMs, up to your monthly cap. Cancel anytime.</p>
+              <div class="poweredby">Secure card capture by <strong>Stripe</strong> · PCI-compliant, your details never touch our servers.</div>
+
+              <div class="error" id="payError" hidden></div>
+            </section>
           </div>
         </div>
 
